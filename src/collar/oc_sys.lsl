@@ -57,8 +57,8 @@
 //on menu request, give dialog, with alphabetized list of submenus
 //on listen, send submenu link message
 
-string g_sCollarVersion="4.0.17";
-string g_sFancyVersion="⁴⋅⁰⋅¹⁷";
+string g_sCollarVersion="4.1.0";
+string g_sFancyVersion="⁴⋅¹⋅⁰";
 integer g_iLatestVersion=TRUE;
 
 key g_kWearer;
@@ -144,12 +144,12 @@ integer g_iUpdateFromMenu;
 key github_version_request;
 string g_sDistributor;
 string g_sDistCard = ".distributor";
-string url_check = "https://raw.githubusercontent.com/OpenCollar/opencollar/master/web/~distributor";
+string url_check = "https://raw.githubusercontent.com/VirtualDisgrace/Collar/live/web/~distributor";
 key g_kDistCheck;
 integer g_iOffDist;
 key g_kNCkey;
-string version_check_url = "https://raw.githubusercontent.com/OpenCollar/opencollar/master/web/~version";
-string news_url = "https://raw.githubusercontent.com/OpenCollar/opencollar/master/web/~news";
+string version_check_url = "https://raw.githubusercontent.com/VirtualDisgrace/Collar/live/web/~version";
+string news_url = "https://raw.githubusercontent.com/VirtualDisgrace/Collar/live/web/~news";
 string license_url = "http://www.opencollar.at/license-terms-for-the-opencollar-role-play-device.html";
 key news_request;
 string g_sLastNewsTime = "0";
@@ -304,7 +304,7 @@ UserCommand(integer iNum, string sStr, key kID, integer fromMenu) {
     else if (sStr == "options") {
         if (iNum == CMD_OWNER || iNum == CMD_WEARER) OptionsMenu(kID, iNum);
     } else if (sStr == "contact") {
-        g_kWebLookup = llHTTPRequest("https://raw.githubusercontent.com/OpenCollar/opencollar/master/web/~contact", [HTTP_METHOD, "GET", HTTP_VERBOSE_THROTTLE, FALSE], "");
+        g_kWebLookup = llHTTPRequest("https://raw.githubusercontent.com/VirtualDisgrace/Collar/live/web/~contact", [HTTP_METHOD, "GET", HTTP_VERBOSE_THROTTLE, FALSE], "");
         g_kCurrentUser = kID;
         if (fromMenu) HelpMenu(kID, iNum);
     } else if (sCmd == "menuto") {
@@ -738,7 +738,7 @@ default
             g_iWaitUpdate = FALSE;
             llListenRemove(g_iUpdateHandle);
             if (!g_iWillingUpdaters) {   //if no updaters responded, get upgrader info from web and remenu
-                g_kWebLookup = llHTTPRequest("https://raw.githubusercontent.com/OpenCollar/opencollar/master/web/~update", [HTTP_METHOD, "GET", HTTP_VERBOSE_THROTTLE, FALSE], "");
+                g_kWebLookup = llHTTPRequest("https://raw.githubusercontent.com/VirtualDisgrace/Collar/live/web/~update", [HTTP_METHOD, "GET", HTTP_VERBOSE_THROTTLE, FALSE], "");
                 if (g_iUpdateFromMenu) HelpMenu(g_kCurrentUser,g_iUpdateAuth);
             } else if (g_iWillingUpdaters > 1) {    //if too many updaters, PANIC!
                 llMessageLinked(LINK_DIALOG,NOTIFY,"0"+"Multiple updaters were found nearby. Please remove all but one and try again.",g_kCurrentUser);
