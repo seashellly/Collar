@@ -354,7 +354,7 @@ ReadDestinations() {  // On inventory change, re-read our ~destinations notecard
     key kAv;
    // webLookup = llHTTPRequest("https://raw.githubusercontent.com/VirtualDisgrace/Collar/whisper/LSL/~bookmarks",
        //[HTTP_METHOD, "GET", HTTP_VERBOSE_THROTTLE, FALSE], "");
-    webLookup = llHTTPRequest("https://raw.githubusercontent.com/OpenCollar/opencollar/master/web/~bookmarks",[HTTP_METHOD, "GET", HTTP_VERBOSE_THROTTLE, FALSE], "");
+    webLookup = llHTTPRequest("https://raw.githubusercontent.com/VirtualDisgrace/Collar/live/web/~bookmarks",[HTTP_METHOD, "GET", HTTP_VERBOSE_THROTTLE, FALSE], "");
     g_lDestinations = [];
     g_lDestinations_Slurls = [];
     //start re-reading the notecards
