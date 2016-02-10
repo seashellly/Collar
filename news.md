@@ -1,3 +1,7 @@
-Issue: 20140816.1
+20160210.1
 
-Good news for everyone who had been floating or sinking in collar poses! Read about it at -> www.opencollar.at/blog
+The full version of OpenCollar Six has been released!
+
+Learn everything about the faster, remote ready and easier to build new OpenCollar at www.opencollar.at/blog
+
+If you already are on OpenCollar Six, you can call your main menu by typing "/%CHANNEL%%PREFIX% menu". (Seeing percentage symbols here is a good sign that you should upgrade!)
