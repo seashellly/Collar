@@ -1,7 +1,5 @@
-20160210.1
+20160303.1
 
-The full version of OpenCollar Six has been released!
+Welcome to OpenCollar 6.1.0
 
-Learn everything about the faster, remote ready and easier to build new OpenCollar at www.opencollar.at/blog
-
-If you already are on OpenCollar Six, you can call your main menu by typing "/%CHANNEL%%PREFIX% menu". (Seeing percentage symbols here is a good sign that you should upgrade!)
+For technical details on this version click [https://github.com/OpenCollar/opencollar/issues?q=milestone%3A6.1.0+is%3Aclosed here] or browse www.opencollar.at for manual pages and news. You can now learn useful things about your %DEVICETYPE% by typing: /%CHANNEL%%PREFIX% info
