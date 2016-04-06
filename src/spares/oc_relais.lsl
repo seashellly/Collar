@@ -21,7 +21,7 @@
 //                    |     .'    ~~~~       \    / :                       //
 //                     \.. /               `. `--' .'                       //
 //                        |                  ~----~                         //
-//                           Relay - 160330.2                               //
+//                          Relais - 160402.1                               //
 // ------------------------------------------------------------------------ //
 //  Copyright (c) 2008 - 2016 Satomi Ahn, Nandana Singh, Joy Stipe,         //
 //  Wendy Starfall, Sumi Perl, littlemousy, Romka Swallowtail et al.        //
@@ -53,8 +53,8 @@
 
 integer g_iSmartStrip = FALSE; // Convert @remoutfit to @detachallthis.
 
-string g_sParentMenu = "Apps";
-string g_sSubMenu = "Relay";
+string g_sParentMenu = "RLV";
+string g_sSubMenu = "Relais";
 
 string g_sAppVersion = "²⋅⁰";
 
@@ -107,6 +107,7 @@ string UPMENU = "BACK";
 string ALL = "ALL";
 
 key g_kWearer;
+string g_sSettingsToken = "relais_";
 
 list g_lMenuIDs;
 integer g_iMenuStride = 3;
@@ -145,11 +146,11 @@ list g_lBlock;
 integer g_iMinBaseMode = 0;
 integer g_iMinSafeMode = 1;
 integer g_iMinLandMode = 0;
-integer g_iMinPlayMode = 0;
+integer g_iMinLiteMode = 0;
 integer g_iBaseMode = 2;
-integer g_iHelpess = 1;
+integer g_iHelpless = 0;
 integer g_iLandMode = 1;
-integer g_iPlayMode = 0;
+integer g_iLiteMode = 0;
 
 key g_kDebugRcpt = NULL_KEY; // recipient key for relay chat debugging (useful since you cannot eavesdrop llRegionSayTo)
 /*
@@ -184,45 +185,45 @@ key SanitizeKey(string uuid) {
 SaveTrustObj()
 {
     if (llGetListLength(g_lTrustObj) > 0)
-        llMessageLinked(LINK_SAVE, LM_SETTING_SAVE, "rlvrelay_trustobj=" + llDumpList2String(g_lTrustObj,","), "");
-    else llMessageLinked(LINK_SAVE, LM_SETTING_DELETE, "rlvrelay_trustobj", "");
+        llMessageLinked(LINK_SAVE, LM_SETTING_SAVE, g_sSettingsToken+"trustobj=" + llDumpList2String(g_lTrustObj,","), "");
+    else llMessageLinked(LINK_SAVE, LM_SETTING_DELETE, g_sSettingsToken+"trustobj", "");
 }
 
 SaveBlockObj()
 {
     if (llGetListLength(g_lBlockObj) > 0)
-        llMessageLinked(LINK_SAVE, LM_SETTING_SAVE, "rlvrelay_blockobj=" + llDumpList2String(g_lBlockObj,","), "");
-    else llMessageLinked(LINK_SAVE, LM_SETTING_DELETE, "rlvrelay_blockobj", "");
+        llMessageLinked(LINK_SAVE, LM_SETTING_SAVE, g_sSettingsToken+"blockobj=" + llDumpList2String(g_lBlockObj,","), "");
+    else llMessageLinked(LINK_SAVE, LM_SETTING_DELETE, g_sSettingsToken+"blockobj", "");
 }
 */
 SaveTrustAv() {
     if (llGetListLength(g_lTrustAv) > 0)
-        llMessageLinked(LINK_SAVE, LM_SETTING_SAVE, "rlvrelay_trustav=" + llDumpList2String(g_lTrustAv,","), "");
-    else llMessageLinked(LINK_SAVE, LM_SETTING_DELETE, "rlvrelay_trustav", "");
+        llMessageLinked(LINK_SAVE, LM_SETTING_SAVE, g_sSettingsToken+"trustav=" + llDumpList2String(g_lTrustAv,","), "");
+    else llMessageLinked(LINK_SAVE, LM_SETTING_DELETE, g_sSettingsToken+"trustav", "");
 }
 
 SaveBlockAv() {
     if (llGetListLength(g_lBlockAv) > 0)
-        llMessageLinked(LINK_SAVE, LM_SETTING_SAVE, "rlvrelay_blockav="+llDumpList2String(g_lBlockAv,",") , "");
-    else llMessageLinked(LINK_SAVE, LM_SETTING_DELETE, "rlvrelay_blockav", "");
+        llMessageLinked(LINK_SAVE, LM_SETTING_SAVE, g_sSettingsToken+"blockav="+llDumpList2String(g_lBlockAv,",") , "");
+    else llMessageLinked(LINK_SAVE, LM_SETTING_DELETE, g_sSettingsToken+"blockav", "");
 }
 
 UpdateMode(integer iMode) {
     g_iBaseMode = iMode        & 3;
-    g_iHelpess = (iMode >> 2) & 1;
+    g_iHelpless = (iMode >> 2) & 1;
     g_iLandMode = (iMode >> 3) & 1;
-    g_iPlayMode = (iMode >> 4) & 1;
+    g_iLiteMode = (iMode >> 4) & 1;
     g_iMinBaseMode = (iMode >> 5) & 3;
     g_iMinSafeMode = (iMode >> 7) & 1;
     g_iMinLandMode = (iMode >> 8) & 1;
-    g_iMinPlayMode = (iMode >> 9) & 1;
+    g_iMinLiteMode = (iMode >> 9) & 1;
     g_iSmartStrip = (iMode >> 10) & 1;
 }
 
 SaveMode() {
-    string sMode = (string)(1024 * g_iSmartStrip + 512 * g_iMinPlayMode + 256 * g_iMinLandMode + 128 * g_iMinSafeMode + 32 * g_iMinBaseMode
-        + 16 * g_iPlayMode + 8 * g_iLandMode + 4 * g_iHelpess + g_iBaseMode);
-    llMessageLinked(LINK_SAVE, LM_SETTING_SAVE, "rlvrelay_mode=" + sMode, "");
+    string sMode = (string)(1024 * g_iSmartStrip + 512 * g_iMinLiteMode + 256 * g_iMinLandMode + 128 * g_iMinSafeMode + 32 * g_iMinBaseMode
+        + 16 * g_iLiteMode + 8 * g_iLandMode + 4 * g_iHelpless + g_iBaseMode);
+    llMessageLinked(LINK_SAVE, LM_SETTING_SAVE, g_sSettingsToken+"mode=" + sMode, "");
 }
 
 integer Auth(key object, key user) {
@@ -257,8 +258,8 @@ integer Auth(key object, key user) {
     return iAuth;
 }
 
-string Name(key id) {
-    return "secondlife:///app/agent/"+(string)id+"/inspect";
+string NameURI(string sID) {
+    return "secondlife:///app/agent/"+sID+"/inspect";
 }
 
 Dequeue() {
@@ -277,12 +278,12 @@ Dequeue() {
     }
     g_lQueue=[sCurIdent,kCurID,sCommand]+g_lQueue;
     list lButtons=["Yes","Trust Owner","Trust Object","No","Block Owner","Block Object"];
-    string sOwner=Name(llGetOwnerKey(kCurID)) ;
+    string sOwner=NameURI(llGetOwnerKey(kCurID)) ;
     string sPrompt=llKey2Name(kCurID)+", owned by "+sOwner+" wants to control your viewer.";
     if (llGetSubString(sCommand,0,6)=="!x-who/") {
         key kUser = SanitizeKey(llGetSubString(sCommand,7,42));
         lButtons+=["Trust User","Block User"];
-        sPrompt+="\n" + Name(kUser) + " is currently using this device.";
+        sPrompt+="\n" + NameURI(kUser) + " is currently using this device.";
     }
     sPrompt+="\n\nDo you want to allow this?";
     g_iAuthPending = TRUE;
@@ -316,7 +317,7 @@ string HandleCommand(string sIdent, key kID, string sCom, integer iAuthed) {
         else if ((!llSubStringIndex(sCom,"@version"))||(!llSubStringIndex(sCom,"@get"))||(!llSubStringIndex(sCom,"@findfolder"))) {//(IsChannelCmd(sCom))
             if ((integer)sVal) llMessageLinked(LINK_RLV,RLV_CMD, llGetSubString(sCom,1,-1), kID); //now with RLV 1.23, negative channels can also be used
             else sAck="ko";
-        } else if (g_iPlayMode&&llGetSubString(sCom,0,0)=="@"&&sVal!="n"&&sVal!="add")
+        } else if (g_iLiteMode&&llGetSubString(sCom,0,0)=="@"&&sVal!="n"&&sVal!="add")
             llMessageLinked(LINK_RLV,RLV_CMD, llGetSubString(sCom,1,-1), kID);
         else if (!iAuthed) {
             if (iGotWho) return "!x-who/"+(string)kWho+"|"+llDumpList2String(llList2List(lCommands,i,-1),"|");
@@ -348,7 +349,7 @@ sendrlvr(string sIdent, key kID, string sCom, string sAck) {
 }
 
 SafeWord() {
-    if (g_iHelpess) {
+    if (!g_iHelpless) {
         llMessageLinked(LINK_RLV, CMD_RELAY_SAFEWORD, "","");
         llOwnerSay("You have safeworded");
         g_lTempBlockObj=[];
@@ -368,23 +369,28 @@ SafeWord() {
 
 //----Menu functions section---//
 Menu(key kID, integer iAuth) {
-    string sPrompt = "\n[http://www.opencollar.at/relay-plugin.html Legacy Relay]\t"+g_sAppVersion;
-    list lButtons = ["☐ Trusted","☐ Ask","☐ Auto"]; 
+    string sPrompt = "\n[http://www.opencollar.at/relay-plugin.html Relais]\t"+g_sAppVersion;
+    list lButtons = ["☐ Trusted","☐ Ask","☐ Auto"];
     if (g_iBaseMode == 1) lButtons = ["☒ Trusted","☐ Ask","☐ Auto"];
     else if (g_iBaseMode == 2) lButtons = ["☐ Trusted","☒ Ask","☐ Auto"];
     else if (g_iBaseMode == 3) lButtons = ["☐ Trusted","☐ Ask","☒ Auto"];
     else sPrompt += "\n\nRelay is Offline";
-   // if (g_lSources != []) lButtons = llDeleteSubList(lButtons,0,0);
-    if (g_iPlayMode) lButtons+=["☑ Lite"];
+    if (g_iLiteMode) lButtons+=["☑ Lite"];
     else lButtons+=["☐ Lite"];
     if (g_iSmartStrip) lButtons+=["☑ Smart"];
     else lButtons+=["☐ Smart"];
     if (g_iLandMode) lButtons+=["☑ Land"];
     else lButtons+=["☐ Land"];
     lButtons+=["Pending","Sources","Access Lists"];
-    if (g_iHelpess) lButtons+=["☑ Helpless"];
+    if (g_iHelpless) lButtons+=["☑ Helpless"];
     else lButtons+=["☐ Helpless"];
-    if (!g_iHelpess) lButtons+=["Safeword!"];
+    if (!g_iHelpless) lButtons+=["Safeword!"];
+    if (g_lSources!=[]) {
+        sPrompt+="\n\nCurrently grabbed by "+(string)(g_lSources!=[])+" source";
+        if (g_lSources==[1]) sPrompt+="."; // Note: only list LENGTH is compared here
+        else sPrompt+="s.";
+    }
+    if (g_lQueue!=[]) sPrompt+="\n\nYou have a pending request.";
     Dialog(kID, sPrompt, lButtons, [UPMENU], 0, iAuth, "Menu~Main");
 }
 
@@ -498,12 +504,12 @@ CleanQueue() {
 
 UserCommand(integer iNum, string sStr, key kID) {
     if (iNum<CMD_OWNER || iNum>CMD_WEARER) return;
-    if (llToLower(sStr) == "rm relay") {
+    if (llToLower(sStr) == "rm relais") {
         if (kID!=g_kWearer && iNum!=CMD_OWNER) llMessageLinked(LINK_DIALOG,NOTIFY,"0"+"%NOACCESS%",kID);
         else  Dialog(kID,"\nAre you sure you want to delete the "+g_sSubMenu+" App?\n", ["Yes","No","Cancel"], [], 0, iNum,"rmrelay");
         return;
     }
-    if (llSubStringIndex(sStr,"relay") && sStr != "menu "+g_sSubMenu) return;
+    if (llSubStringIndex(sStr,"relais") && sStr != "menu "+g_sSubMenu) return;
     if (iNum == CMD_OWNER && sStr == "runaway") {
         g_lOwner = g_lTrust = g_lBlock = [];
         return;
@@ -511,12 +517,12 @@ UserCommand(integer iNum, string sStr, key kID) {
     if (!g_iRLV) {
         llMessageLinked(LINK_DIALOG, NOTIFY, "0RLV features are now disabled in this %DEVICETYPE%. You can enable those in RLV submenu. Opening it now.", kID);
         llMessageLinked(LINK_SET, iNum, "menu RLV", kID);
-    } else if (sStr=="relay" || sStr == "menu "+g_sSubMenu) Menu(kID, iNum);
+    } else if (sStr=="relais" || sStr == "menu "+g_sSubMenu) Menu(kID, iNum);
     else if (iNum!=CMD_OWNER && iNum!=CMD_TRUSTED && kID!=g_kWearer) llMessageLinked(LINK_DIALOG, NOTIFY, "0"+"%NOACCESS%",kID);
-    else if ((sStr=llGetSubString(sStr,6,-1))=="safeword") SafeWord(); // cut "relay " off sStr
+    else if ((sStr=llGetSubString(sStr,7,-1))=="safeword") SafeWord(); // cut "relais " off sStr
     else if (sStr=="getdebug") {
         g_kDebugRcpt = kID;
-        llMessageLinked(LINK_DIALOG, NOTIFY, "1Relay messages will be forwarded to "+Name(kID)+".", kID);
+        llMessageLinked(LINK_DIALOG, NOTIFY, "1Relay messages will be forwarded to "+NameURI(kID)+".", kID);
         return;
     } else if (sStr=="stopdebug") {
         g_kDebugRcpt = NULL_KEY;
@@ -524,7 +530,10 @@ UserCommand(integer iNum, string sStr, key kID) {
         return;
     } else if (sStr=="pending") {
         if (g_lQueue != []) Dequeue();
-        else llOwnerSay("No pending relay request for now.");
+        else {
+            llMessageLinked(LINK_DIALOG, NOTIFY, "0No pending relay request for now.", kID);
+            Menu(kID, iNum);
+        }
     } else if (sStr=="access") AccessList(kID, iNum);
     else {
         integer iWSuccess = 0; //0: successful, 1: forbidden because of minmode, 2: forbidden because grabbed, 3: unrecognized commad
@@ -538,14 +547,14 @@ UserCommand(integer iNum, string sStr, key kID) {
                 else if (g_lSources!=[]) iWSuccess = 2;
                 else {
                     sText = "Relay helpless mode enabled.";
-                    g_iHelpess = TRUE;
+                    g_iHelpless = TRUE;
                 }
             } else if (sChangevalue == "off") {
                 if (iNum == CMD_OWNER) g_iMinSafeMode = FALSE;
-                g_iHelpess = FALSE;
+                g_iHelpless = FALSE;
                 sText = "Relay helpless mode disabled.";
             } else iWSuccess = 3;
-        } else if (sChangetype == "smartstrip") {
+        } else if (llGetSubString(sChangetype,0,4) == "smart") {
             if (sChangevalue == "off") {
                 g_iSmartStrip = FALSE;
                 sText = "Relay Smartstrip turned off.";
@@ -568,16 +577,16 @@ UserCommand(integer iNum, string sStr, key kID) {
             } else iWSuccess = 3;
         } else if (sChangetype=="lite") {
             if (sChangevalue == "off") {
-                if (iNum == CMD_OWNER) g_iMinPlayMode = FALSE;
-                if (g_iMinPlayMode == TRUE) iWSuccess = 1;
+                if (iNum == CMD_OWNER) g_iMinLiteMode = FALSE;
+                if (g_iMinLiteMode == TRUE) iWSuccess = 1;
                 else {
                     sText = "Relay is not playful.";
-                    g_iPlayMode = FALSE;
+                    g_iLiteMode = FALSE;
                 }
             } else if (sChangevalue == "on") {
-                if (iNum == CMD_OWNER) g_iMinPlayMode = TRUE;
+                if (iNum == CMD_OWNER) g_iMinLiteMode = TRUE;
                 sText = "Relay is playful.";
-                g_iPlayMode = TRUE;
+                g_iLiteMode = TRUE;
             } else iWSuccess = 3;
         } else {
             list lModes = ["off", "trusted", "ask", "auto"];
@@ -608,6 +617,11 @@ default {
 
     state_entry() {
         g_kWearer = llGetOwner();
+        if (llGetInventoryType("oc_relay") == INVENTORY_SCRIPT) { //clean legacy relay
+            llMessageLinked(LINK_ROOT, MENUNAME_REMOVE , "Apps|" + g_sSubMenu, "");
+            llMessageLinked(LINK_ALL_OTHERS,LM_SETTING_DELETE,"rlvrelay_all","");
+            llRemoveInventory("oc_relay");
+        }
         g_lSources=[];
         llSetTimerEvent(g_iGarbageRate); //start garbage collection timer
         //Debug("Starting");
@@ -626,11 +640,11 @@ default {
             list lParams = llParseString2List(sStr, ["="], []);
             string sToken = llList2String(lParams, 0);
             string sValue = llList2String(lParams, 1);
-            if (sToken == "rlvrelay_mode") UpdateMode((integer)sValue);
-            else if (sToken=="rlvrelay_trustav") g_lTrustAv = llParseString2List(sValue, [","], []);
-            else if (sToken=="rlvrelay_blockav") g_lBlockAv = llParseString2List(sValue, [","], []);
-           // else if (sToken=="rlvrelay_trustobj") g_lTrustObj = llParseString2List(sValue, [","], []);
-           // else if (sToken=="rlvrelay_blockobj") g_lBlockObj = llParseString2List(sValue, [","], []);
+            if (sToken == g_sSettingsToken+"mode") UpdateMode((integer)sValue);
+            else if (sToken==g_sSettingsToken+"trustav") g_lTrustAv = llParseString2List(sValue, [","], []);
+            else if (sToken==g_sSettingsToken+"blockav") g_lBlockAv = llParseString2List(sValue, [","], []);
+           // else if (sToken==g_sSettingsToken+"trustobj") g_lTrustObj = llParseString2List(sValue, [","], []);
+           // else if (sToken==g_sSettingsToken+"blockobj") g_lBlockObj = llParseString2List(sValue, [","], []);
             else if (sToken == "auth_owner") g_lOwner = llParseString2List(sValue, [","], []);
             else if (sToken == "auth_tempowner") g_lTempOwner = llParseString2List(sValue, [","], []);
             else if (sToken == "auth_trust") g_lTrust = llParseString2List(sValue, [","], []);
@@ -657,9 +671,9 @@ default {
                 llSetTimerEvent(g_iGarbageRate);
                 if (sMenu == "Menu~Main") {
                     if (sMsg==UPMENU) llMessageLinked(LINK_SET,iAuth,"menu "+g_sParentMenu,kAv);
-                    else if (sMsg=="Pending") UserCommand(iAuth, "relay pending", kAv);
-                    else if (sMsg=="Access Lists") UserCommand(iAuth, "relay access", kAv);
-                    else if (sMsg=="Safeword!") UserCommand(iAuth, "relay safeword", kAv);
+                    else if (sMsg=="Pending") UserCommand(iAuth, "relais pending", kAv);
+                    else if (sMsg=="Access Lists") UserCommand(iAuth, "relais access", kAv);
+                    else if (sMsg=="Safeword!") UserCommand(iAuth, "relais safeword", kAv);
                     else if (sMsg=="Sources") {
                         llMessageLinked(LINK_RLV, iAuth,"show restrictions", kAv);
                         Menu(kAv, iAuth);
@@ -669,7 +683,7 @@ default {
                             sMsg = llDeleteSubString(sMsg,0,1)+" on";
                         else if (llSubStringIndex(sMsg,"☒ ")==0||llSubStringIndex(sMsg,"☑ ")==0) 
                             sMsg = llDeleteSubString(sMsg,0,1)+" off";
-                        sMsg ="relay "+sMsg;
+                        sMsg ="relais "+sMsg;
                         UserCommand(iAuth, sMsg, kAv);
                         Menu(kAv, iAuth);
                     }                    
@@ -732,7 +746,7 @@ default {
                         for (i=0;i<(g_lSources!=[]);++i)
                             sendrlvr("release", llList2Key(g_lSources, i), "!release", "ok");
                         UserCommand(500, "relay off", kAv);
-                        llMessageLinked(LINK_ROOT, MENUNAME_REMOVE , g_sParentMenu + "|" + g_sSubMenu, "");
+                        llMessageLinked(LINK_RLV, MENUNAME_REMOVE , g_sParentMenu + "|" + g_sSubMenu, "");
                         llMessageLinked(LINK_DIALOG, NOTIFY, "1"+g_sSubMenu+" App has been removed.", kAv);
                         if (llGetInventoryType(llGetScriptName()) == INVENTORY_SCRIPT) llRemoveInventory(llGetScriptName());
                     } else llMessageLinked(LINK_DIALOG, NOTIFY, "0"+g_sSubMenu+" App remains installed.", kAv);
@@ -743,7 +757,7 @@ default {
             if (~iMenuIndex) {
                 if (llList2String(g_lMenuIDs, iMenuIndex+1) == "AuthMenu") {
                     g_iAuthPending = FALSE;
-                    llOwnerSay("Relay authorization dialog expired. You can make it appear again with command \"<prefix>relay pending\".");
+                    llOwnerSay("Relay authorization dialog expired. You can make it appear again with command \"%PREFIX% relay pending\".");
                 }
                 g_lMenuIDs = llDeleteSubList(g_lMenuIDs, iMenuIndex-1, iMenuIndex-2+g_iMenuStride);
             }
@@ -821,8 +835,8 @@ default {
 //                llSetTimerEvent(30.);
 // SA: maybe some of the above should be re-added to "punish" spammers more aggressively.
             }
-           
-        } else if (g_iPlayMode) {HandleCommand(sIdent,kID,sMsg,FALSE); llSetTimerEvent(g_iGarbageRate);}
+            if (!g_iAuthPending) Dequeue();
+        } else if (g_iLiteMode) {HandleCommand(sIdent,kID,sMsg,FALSE); llSetTimerEvent(g_iGarbageRate);}
     }
 
     timer() {
@@ -840,7 +854,7 @@ default {
                 llMessageLinked(LINK_RLV,RLV_CMD,"clear",kID);
         }
         llSetTimerEvent(g_iGarbageRate);
-        g_iAuthPending = FALSE;
+        //g_iAuthPending = FALSE;
         g_lTempBlockObj=[];
         g_lTempTrustObj=[];
         if (g_lSources == []) {
@@ -849,14 +863,19 @@ default {
             g_lTempTrustUser=[];
         }
     }
-/*
+
     changed(integer iChange) {
-        if (iChange & CHANGED_REGION) {
+        if (iChange & CHANGED_INVENTORY) {
+            if (llGetInventoryType("oc_relay") == INVENTORY_SCRIPT) {
+                llMessageLinked(LINK_ROOT, MENUNAME_REMOVE , "Apps|" + g_sSubMenu, "");
+                llRemoveInventory("oc_relay");
+            }
+        }
+        /*if (iChange & CHANGED_REGION) {
             if (g_iProfiled) {
                 llScriptProfiler(1);
                 Debug("profiling restarted");
             }
-        }
+        }*/
     }
-*/
 }
