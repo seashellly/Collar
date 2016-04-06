@@ -1,30 +1,30 @@
 //////////////////////////////////////////////////////////////////////////////
 //                                                                          //
-//              ____                   ______      ____                     //
-//             / __ \____  ___  ____  / ____/___  / / /___ ______           //
-//            / / / / __ \/ _ \/ __ \/ /   / __ \/ / / __ `/ ___/           //
-//           / /_/ / /_/ /  __/ / / / /___/ /_/ / / / /_/ / /               //
-//           \____/ .___/\___/_/ /_/\____/\____/_/_/\__,_/_/                //
-//               /_/                                                        //
+//       _   ___     __            __  ___  _                               //
+//      | | / (_)___/ /___ _____ _/ / / _ \(_)__ ___ ________ ________      //
+//      | |/ / / __/ __/ // / _ `/ / / // / (_-</ _ `/ __/ _ `/ __/ -_)     //
+//      |___/_/_/  \__/\_,_/\_,_/_/ /____/_/___/\_, /_/  \_,_/\__/\__/      //
+//                                             /___/                        //
 //                                                                          //
-//                        ,^~~~-.         .-~~~"-.                          //
-//                       :  .--. \       /  .--.  \                         //
-//                       : (    .-`<^~~~-: :    )  :                        //
-//                       `. `-,~            ^- '  .'                        //
-//                         `-:                ,.-~                          //
-//                          .'                  `.                          //
-//                         ,'   @   @            |                          //
-//                         :    __               ;                          //
-//                      ...{   (__)          ,----.                         //
-//                     /   `.              ,' ,--. `.                       //
-//                    |      `.,___   ,      :    : :                       //
-//                    |     .'    ~~~~       \    / :                       //
-//                     \.. /               `. `--' .'                       //
-//                        |                  ~----~                         //
-//                          Relais - 160402.1                               //
+//                                        _                                 //
+//                                        \`*-.                             //
+//                                         )  _`-.                          //
+//                                        .  : `. .                         //
+//                                        : _   '  \                        //
+//                                        ; *` _.   `*-._                   //
+//                                        `-.-'          `-.                //
+//                                          ;       `       `.              //
+//                                          :.       .        \             //
+//                                          . \  .   :   .-'   .            //
+//                                          '  `+.;  ;  '      :            //
+//                                          :  '  |    ;       ;-.          //
+//                                          ; '   : :`-:     _.`* ;         //
+//           Relais - 160406.1           .*' /  .*' ; .*`- +'  `*'          //
+//                                       `*-*   `*-*  `*-*'                 //
 // ------------------------------------------------------------------------ //
 //  Copyright (c) 2008 - 2016 Satomi Ahn, Nandana Singh, Joy Stipe,         //
-//  Wendy Starfall, Sumi Perl, littlemousy, Romka Swallowtail et al.        //
+//  Wendy Starfall, Sumi Perl, littlemousy, Romka Swallowtail,              //
+//  Garvin Twine et al.                                                     //
 // ------------------------------------------------------------------------ //
 //  This script is free software: you can redistribute it and/or modify     //
 //  it under the terms of the GNU General Public License as published       //
@@ -47,7 +47,7 @@
 //  future, then "full perms" will mean the most permissive possible set    //
 //  of permissions allowed by the platform.                                 //
 // ------------------------------------------------------------------------ //
-//         github.com/OpenCollar/opencollar/tree/master/src/spares          //
+//         github.com/VirtualDisgrace/Collar/tree/relay/src/spares          //
 // ------------------------------------------------------------------------ //
 //////////////////////////////////////////////////////////////////////////////
 
@@ -369,7 +369,7 @@ SafeWord() {
 
 //----Menu functions section---//
 Menu(key kID, integer iAuth) {
-    string sPrompt = "\n[http://www.opencollar.at/relay-plugin.html Relais]\t"+g_sAppVersion;
+    string sPrompt = "\n[http://www.opencollar.at/construction-site.html Relais]\t"+g_sAppVersion;
     list lButtons = ["☐ Trusted","☐ Ask","☐ Auto"];
     if (g_iBaseMode == 1) lButtons = ["☒ Trusted","☐ Ask","☐ Auto"];
     else if (g_iBaseMode == 2) lButtons = ["☐ Trusted","☒ Ask","☐ Auto"];
