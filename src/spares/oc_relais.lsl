@@ -19,7 +19,7 @@
 //                                          '  `+.;  ;  '      :            //
 //                                          :  '  |    ;       ;-.          //
 //                                          ; '   : :`-:     _.`* ;         //
-//             Relay - 160419.8          .*' /  .*' ; .*`- +'  `*'          //
+//             Relay - 160419.9          .*' /  .*' ; .*`- +'  `*'          //
 //                                       `*-*   `*-*  `*-*'                 //
 // ------------------------------------------------------------------------ //
 //  Copyright (c) 2008 - 2016 Satomi Ahn, Nandana Singh, Joy Stipe,         //
@@ -380,12 +380,21 @@ SafeWord() {
 
 //----Menu functions section---//
 Menu(key kID, integer iAuth) {
-    string sPrompt = "\n[http://www.opencollar.at/relay-plugin.html Relay]\t"+g_sAppVersion;
+    string sPrompt = "\n[http://www.opencollar.at/relay-plugin.html Relay ]";
     list lButtons = ["☐ Trusted","☐ Ask","☐ Auto"];
-    if (g_iBaseMode == 1) lButtons = ["☒ Trusted","☐ Ask","☐ Auto"];
-    else if (g_iBaseMode == 2) lButtons = ["☐ Trusted","☒ Ask","☐ Auto"];
-    else if (g_iBaseMode == 3) lButtons = ["☐ Trusted","☐ Ask","☒ Auto"];
-    else sPrompt += "\n\nRelay is Offline";
+    if (g_iBaseMode == 1){
+        lButtons = ["☒ Trusted","☐ Ask","☐ Auto"];
+        sPrompt += "is set to trusted mode.";
+    }
+    else if (g_iBaseMode == 2){
+        lButtons = ["☐ Trusted","☒ Ask","☐ Auto"];
+        sPrompt += "is set to ask mode.";
+    }
+    else if (g_iBaseMode == 3){
+        lButtons = ["☐ Trusted","☐ Ask","☒ Auto"];
+        sPrompt += "is set to auto mode.";
+    }
+    else sPrompt += "is offline.";
     if (g_iLiteMode) lButtons+=["☑ Lite"];
     else lButtons+=["☐ Lite"];
     if (g_iSmartStrip) lButtons+=["☑ Smart"];
