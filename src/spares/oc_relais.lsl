@@ -19,7 +19,7 @@
 //                                          '  `+.;  ;  '      :            //
 //                                          :  '  |    ;       ;-.          //
 //                                          ; '   : :`-:     _.`* ;         //
-//             Relay - 160419.5          .*' /  .*' ; .*`- +'  `*'          //
+//             Relay - 160419.7          .*' /  .*' ; .*`- +'  `*'          //
 //                                       `*-*   `*-*  `*-*'                 //
 // ------------------------------------------------------------------------ //
 //  Copyright (c) 2008 - 2016 Satomi Ahn, Nandana Singh, Joy Stipe,         //
@@ -319,7 +319,7 @@ string HandleCommand(string sIdent, key kID, string sCom, integer iAuthed) {
         else if (llGetSubString(sCom,0,6)=="!x-who/") {kWho = SanitizeKey(llGetSubString(sCom,7,42)); iGotWho=TRUE;}
         else if (llGetSubString(sCom,0,0) == "!") sAck = "ko"; // ko unknown meta-commands
         else if (llGetSubString(sCom,0,0) != "@") {
-             RelayNotify(g_kWearer,"\n\nBad RLV relay command from "+llKey2Name(kID)+".\n\nCommand: "+sIdent+","+(string)g_kWearer+","+llDumpList2String(lCommands,"|")+"\n\nFaulty subcommand: "+sCom+"\n\nPlease report to the maker of this device.\n",0); //added this after issue 984
+             RelayNotify(g_kWearer,"\n\nBad command from "+llKey2Name(kID)+".\n\nCommand: "+sIdent+","+(string)g_kWearer+","+llDumpList2String(lCommands,"|")+"\n\nFaulty subcommand: "+sCom+"\n\nPlease report to the maker of this device.\n",0); //added this after issue 984
             //if (iIsWho) return llList2String(lCommands,0)+"|"+llDumpList2String(llList2List(lCommands,i,-1),"|");
             //else return llDumpList2String(llList2List(lCommands,i,-1),"|");
             //better try to execute the rest of the command, right?
@@ -342,7 +342,7 @@ string HandleCommand(string sIdent, key kID, string sCom, integer iAuthed) {
                 llMessageLinked(LINK_RLV,RLV_CMD,sBehav+"="+sVal,kID);
             else sAck="ko";
         } else {
-             RelayNotify(g_kWearer,"\n\nBad RLV relay command from "+llKey2Name(kID)+".\n\nCommand: "+sIdent+","+(string)g_kWearer+","+llDumpList2String(lCommands,"|")+"\n\nFaulty subcommand: "+sCom+"\n\nPlease report to the maker of this device.\n",0); //added this after issue 984
+             RelayNotify(g_kWearer,"\n\nBad command from "+llKey2Name(kID)+".\n\nCommand: "+sIdent+","+(string)g_kWearer+","+llDumpList2String(lCommands,"|")+"\n\nFaulty subcommand: "+sCom+"\n\nPlease report to the maker of this device.\n",0); //added this after issue 984
             //if (iIsWho) return llList2String(lCommands,0)+"|"+llDumpList2String(llList2List(lCommands,i,-1),"|");
             //else return llDumpList2String(llList2List(lCommands,i,-1),"|");
             //better try to execute the rest of the command, right?
@@ -362,7 +362,7 @@ sendrlvr(string sIdent, key kID, string sCom, string sAck) {
 SafeWord() {
     if (!g_iHelpless) {
         llMessageLinked(LINK_RLV, CMD_RELAY_SAFEWORD, "","");
-        RelayNotify(g_kWearer,"Mayday!",0);
+        RelayNotify(g_kWearer,"\n\n\"Mayday!\"\n",0);
         g_lTempBlockObj=[];
         g_lTempTrustObj=[];
         g_lTempBlockUser=[];
@@ -374,7 +374,7 @@ SafeWord() {
         g_iRecentSafeword = TRUE;
         refreshRlvListener();
         llSetTimerEvent(30.);
-    } else RelayNotify(g_kWearer,"Access denied!",0);
+    } else RelayNotify(g_kWearer,"\n\nAccess denied!\n",0);
 
 }
 
@@ -453,7 +453,7 @@ RemoveList(string sMsg, integer iAuth, string sListType) {
         }
         //SaveBlockObj();
     } else if (iAuth==CMD_WEARER && g_iMinBaseMode > 0) {
-        RelayNotify(g_kWearer,"Access denied!",0);
+        RelayNotify(g_kWearer,"\n\nAccess denied!\n",0);
         return;
     } else if (sListType == "Trust Objects") {
         if (sMsg == ALL) g_lTrustObj = [];
@@ -516,7 +516,7 @@ CleanQueue() {
 UserCommand(integer iNum, string sStr, key kID) {
     if (iNum<CMD_OWNER || iNum>CMD_WEARER) return;
     if (llToLower(sStr) == "rm relay") {
-        if (kID!=g_kWearer && iNum!=CMD_OWNER) RelayNotify(kID,"Access denied!",0);
+        if (kID!=g_kWearer && iNum!=CMD_OWNER) RelayNotify(kID,"\n\nAccess denied!\n",0);
         else  Dialog(kID,"\nAre you sure you want to delete the relay plugin?\n", ["Yes","No","Cancel"], [], 0, iNum,"rmrelay");
         return;
     }
@@ -529,20 +529,20 @@ UserCommand(integer iNum, string sStr, key kID) {
         llMessageLinked(LINK_RLV, iNum, "menu RLV", kID);
         llMessageLinked(LINK_DIALOG,NOTIFY,"0\n\n\The relay requires RLV to be running in the %DEVICETYPE% but it currently is not. To make things work, click \"ON\" in the RLV menu that just popped up!\n",kID);  
     } else if (sStr=="relay" || sStr == "menu "+g_sSubMenu) Menu(kID, iNum);
-    else if (iNum!=CMD_OWNER && iNum!=CMD_TRUSTED && kID!=g_kWearer) RelayNotify(kID,"Access denied!",0);
-    else if ((sStr=llGetSubString(sStr,7,-1))=="safeword") SafeWord(); // cut "relay " off sStr
+    else if (iNum!=CMD_OWNER && iNum!=CMD_TRUSTED && kID!=g_kWearer) RelayNotify(kID,"\n\nAccess denied!\n",0);
+    else if ((sStr=llGetSubString(sStr,6,-1))=="safeword") SafeWord(); // cut "relay " off sStr
     else if (sStr=="getdebug") {
         g_kDebugRcpt = kID;
-        RelayNotify(kID,"Relay messages will be forwarded to "+NameURI(kID)+".",1);
+        RelayNotify(kID,"\n\nMessages will be forwarded to "+NameURI(kID)+".\n",1);
         return;
     } else if (sStr=="stopdebug") {
         g_kDebugRcpt = NULL_KEY;
-        RelayNotify(kID,"Relay messages will not forwarded anymore.",1);
+        RelayNotify(kID,"\n\nMessages won't forwarded anymore.\n",1);
         return;
     } else if (sStr=="pending") {
         if (g_lQueue != []) Dequeue();
         else {
-            RelayNotify(kID,"There are no pending relay requests.",0);
+            RelayNotify(kID,"\n\nThere are no pending requests.\n",0);
             Menu(kID, iNum);
         }
     } else if (sStr=="access") AccessList(kID, iNum);
@@ -557,20 +557,20 @@ UserCommand(integer iNum, string sStr, key kID) {
                 if (g_iMinSafeMode == FALSE) iWSuccess = 1;
                 else if (g_lSources!=[]) iWSuccess = 2;
                 else {
-                    sText = "Helpless relay mode enabled.";
+                    sText = "\n\nHelplessness option activated. Restrictions from outside sources can't be cleard with safewording.\n";
                     g_iHelpless = TRUE;
                 }
             } else if (sChangevalue == "off") {
                 if (iNum == CMD_OWNER) g_iMinSafeMode = FALSE;
                 g_iHelpless = FALSE;
-                sText = "Helpless relay mode disabled.";
+                sText = "\n\nHelplessness option deactivated. Safewording will clear restrictions from outside sources.\n";
             } else iWSuccess = 3;
         } else if (llGetSubString(sChangetype,0,4) == "smart") {
             if (sChangevalue == "off") {
                 g_iSmartStrip = FALSE;
-                sText = "Smartstrip turned off.";
+                sText = "\n\nSmartstrip turned off.\n";
             } else if (sChangevalue == "on") {
-                sText = "Smartstrip turned on.";
+                sText = "\n\nSmartstrip turned on.\n";
                 g_iSmartStrip = TRUE;
             }
         } else if (sChangetype=="land") {
@@ -578,12 +578,12 @@ UserCommand(integer iNum, string sStr, key kID) {
                 if (iNum == CMD_OWNER) g_iMinLandMode = FALSE;
                 if (g_iMinLandMode == TRUE) iWSuccess = 1;
                 else {
-                    sText = "Landowner is not trusted.";
+                    sText = "\n\nLandowner is not trusted. RLV commands from their objects will require confirmation on Ask mode as well.\n";
                     g_iLandMode = FALSE;
                 }
             } else if (sChangevalue == "on") {
                 if (iNum == CMD_OWNER) g_iMinLandMode = TRUE;
-                sText = "Landowner is trusted.";
+                sText = "\n\nLandowner is trusted. RLV commands from their objects will be processed without confirmation even on Ask mode.\n";
                 g_iLandMode = TRUE;
             } else iWSuccess = 3;
         } else if (sChangetype=="lite") {
@@ -591,12 +591,12 @@ UserCommand(integer iNum, string sStr, key kID) {
                 if (iNum == CMD_OWNER) g_iMinLiteMode = FALSE;
                 if (g_iMinLiteMode == TRUE) iWSuccess = 1;
                 else {
-                    sText = "Relay is not playful.";
+                    sText = "\n\nLite option deactivated. Unless on Ask mode, stripping and restrictive requests will be processed without confirmation.\n";
                     g_iLiteMode = FALSE;
                 }
             } else if (sChangevalue == "on") {
                 if (iNum == CMD_OWNER) g_iMinLiteMode = TRUE;
-                sText = "Relay is playful.";
+                sText = "\n\nLite option activated. Only stripping will happen instantly now. All restrictive requests will require prior confirmation.\n";
                 g_iLiteMode = TRUE;
             } else iWSuccess = 3;
         } else {
@@ -606,16 +606,16 @@ UserCommand(integer iNum, string sStr, key kID) {
             if (iNum == CMD_OWNER) g_iMinBaseMode = iModeType;
             if (~iModeType) {
                 if (iModeType >= g_iMinBaseMode) {
-                    if (iModeType) sText = "Relay mode is "+llList2String(lModes,iModeType)+".";
-                    else sText = "Relay is offline.";
+                    if (iModeType) sText = "\n\n"+llList2String(lModes,iModeType)+" mode online.\n";
+                    else sText = "\n\nRelay is offline.\n";
                     g_iBaseMode = iModeType;
                 } else iWSuccess = 1;
             } else iWSuccess = 3;
         }
         if (!iWSuccess) RelayNotify(kID,sText,1);
-        else if (iWSuccess == 1)  RelayNotify(kID,"Access denied!",0);
-        else if (iWSuccess == 2)  RelayNotify(kID,"\n\nOne or more sources are currently in use. Helpless mode can't be toggled at this moment.\n",1);
-        else if (iWSuccess == 3)  RelayNotify(kID,"Invalid command, please read the manual.",0);
+        else if (iWSuccess == 1)  RelayNotify(kID,"\n\nAccess denied!\n",0);
+        else if (iWSuccess == 2)  RelayNotify(kID,"\n\nOne or more sources are currently in use. Helplessness can't be toggled at this moment.\n",1);
+        //else if (iWSuccess == 3)  RelayNotify(kID,"Invalid command, please read the manual.",0);
         SaveMode();
         refreshRlvListener();
     }
@@ -753,9 +753,9 @@ default {
                             sendrlvr("release", llList2Key(g_lSources, i), "!release", "ok");
                         UserCommand(500, "relay off", kAv);
                         llMessageLinked(LINK_RLV, MENUNAME_REMOVE , g_sParentMenu + "|" + g_sSubMenu, "");
-                        RelayNotify(kAv,"The relay plugin has been removed.",1);
+                        llMessageLinked(LINK_DIALOG, NOTIFY, "0The relay plugin has been removed.", kAv);
                         if (llGetInventoryType(llGetScriptName()) == INVENTORY_SCRIPT) llRemoveInventory(llGetScriptName());
-                    } else RelayNotify(kAv,"The relay plugin remains installed.",0);
+                    } else llMessageLinked(LINK_DIALOG, NOTIFY, "0The relay plugin remains installed.", kAv);
                 }
             }
         } else if (iNum == DIALOG_TIMEOUT) {
@@ -763,7 +763,7 @@ default {
             if (~iMenuIndex) {
                 if (llList2String(g_lMenuIDs, iMenuIndex+1) == "AuthMenu") {
                     g_iAuthPending = FALSE;
-                    RelayNotify(g_kWearer,"Relay authorization dialog expired. You can make it appear again with command \"%PREFIX% relay pending\".",0);
+                    RelayNotify(g_kWearer,"\n\nAuthorization dialog expired. You can make it appear again with command \"%PREFIX% relay pending\".\n",0);
                 }
                 g_lMenuIDs = llDeleteSubList(g_lMenuIDs, iMenuIndex-1, iMenuIndex-2+g_iMenuStride);
             }
@@ -831,7 +831,7 @@ default {
                 key kOldestId = llList2Key(g_lQueue, 1);  // It's actually more likely we want to drop the old request we completely forgot about rather than the newest one that will be forgotten because of some obscure memory limit.
 //                key kOldUser = NULL_KEY;
 //                if (llGetSubString(sMsg,0,6)=="!x-who/") kOldUser=SanitizeKey(llGetSubString(llList2String(g_lQueue, 2),7,42));
-                RelayNotify(g_kWearer,"\n\nRelay queue saturated. Dropping all requests from oldest source ("+ llKey2Name(kOldestId) +").\n",0);
+                RelayNotify(g_kWearer,"\n\nQueue saturated. Dropping all requests from oldest source ("+ llKey2Name(kOldestId) +").\n",0);
                 g_lTempBlockObj+=[kOldestId];
 //                if (kUser) g_lTempBlockUser+=[kUser];
                 CleanQueue();
