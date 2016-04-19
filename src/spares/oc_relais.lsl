@@ -19,7 +19,7 @@
 //                                          '  `+.;  ;  '      :            //
 //                                          :  '  |    ;       ;-.          //
 //                                          ; '   : :`-:     _.`* ;         //
-//         Das Relais - 160419.2           .*' /  .*' ; .*`- +'  `*'        //
+//             Relay - 160419.3          .*' /  .*' ; .*`- +'  `*'          //
 //                                       `*-*   `*-*  `*-*'                 //
 // ------------------------------------------------------------------------ //
 //  Copyright (c) 2008 - 2016 Satomi Ahn, Nandana Singh, Joy Stipe,         //
@@ -107,7 +107,7 @@ string UPMENU = "BACK";
 string ALL = "ALL";
 
 key g_kWearer;
-string g_sSettingsToken = "relais_";
+string g_sSettingsToken = "relay_";
 
 list g_lMenuIDs;
 integer g_iMenuStride = 3;
@@ -504,12 +504,12 @@ CleanQueue() {
 
 UserCommand(integer iNum, string sStr, key kID) {
     if (iNum<CMD_OWNER || iNum>CMD_WEARER) return;
-    if (llToLower(sStr) == "rm relais") {
+    if (llToLower(sStr) == "rm relay") {
         if (kID!=g_kWearer && iNum!=CMD_OWNER) llMessageLinked(LINK_DIALOG, NOTIFY, "0%NOACCESS%", kID);
-        else  Dialog(kID,"\nAre you sure you want to delete \"Das Relais\"?\n", ["Yes","No","Cancel"], [], 0, iNum,"rmrelais");
+        else  Dialog(kID,"\nAre you sure you want to delete \"Das Relais\"?\n", ["Yes","No","Cancel"], [], 0, iNum,"rmrelay");
         return;
     }
-    if (llSubStringIndex(sStr,"relais") && sStr != "menu "+g_sSubMenu) return;
+    if (llSubStringIndex(sStr,"relay") && sStr != "menu "+g_sSubMenu) return;
     if (iNum == CMD_OWNER && sStr == "runaway") {
         g_lOwner = g_lTrust = g_lBlock = [];
         return;
@@ -517,9 +517,9 @@ UserCommand(integer iNum, string sStr, key kID) {
     if (!g_iRLV) {
         llMessageLinked(LINK_RLV, iNum, "menu RLV", kID);
         llMessageLinked(LINK_DIALOG, NOTIFY, "0\n\n\"Das Relais\" requires RLV to be running in the %DEVICETYPE% but it currently is not. To make things work, click \"ON\" in the RLV menu that just popped up!\n", kID);  
-    } else if (sStr=="relais" || sStr == "menu "+g_sSubMenu) Menu(kID, iNum);
+    } else if (sStr=="relay" || sStr == "menu "+g_sSubMenu) Menu(kID, iNum);
     else if (iNum!=CMD_OWNER && iNum!=CMD_TRUSTED && kID!=g_kWearer) llMessageLinked(LINK_DIALOG, NOTIFY, "0%NOACCESS%", kID);
-    else if ((sStr=llGetSubString(sStr,7,-1))=="safeword") SafeWord(); // cut "relais " off sStr
+    else if ((sStr=llGetSubString(sStr,7,-1))=="safeword") SafeWord(); // cut "relay " off sStr
     else if (sStr=="getdebug") {
         g_kDebugRcpt = kID;
         llMessageLinked(LINK_DIALOG, NOTIFY, "1Relay messages will be forwarded to "+NameURI(kID)+".", kID);
@@ -546,20 +546,20 @@ UserCommand(integer iNum, string sStr, key kID) {
                 if (g_iMinSafeMode == FALSE) iWSuccess = 1;
                 else if (g_lSources!=[]) iWSuccess = 2;
                 else {
-                    sText = "Relay helpless mode enabled.";
+                    sText = "Helpless relay mode enabled.";
                     g_iHelpless = TRUE;
                 }
             } else if (sChangevalue == "off") {
                 if (iNum == CMD_OWNER) g_iMinSafeMode = FALSE;
                 g_iHelpless = FALSE;
-                sText = "Relay helpless mode disabled.";
+                sText = "Helpless relay mode disabled.";
             } else iWSuccess = 3;
         } else if (llGetSubString(sChangetype,0,4) == "smart") {
             if (sChangevalue == "off") {
                 g_iSmartStrip = FALSE;
-                sText = "Relay Smartstrip turned off.";
+                sText = "Smartstrip turned off.";
             } else if (sChangevalue == "on") {
-                sText = "Relay Smartstrip turned on.";
+                sText = "Smartstrip turned on.";
                 g_iSmartStrip = TRUE;
             }
         } else if (sChangetype=="land") {
@@ -671,9 +671,9 @@ default {
                 llSetTimerEvent(g_iGarbageRate);
                 if (sMenu == "Menu~Main") {
                     if (sMsg==UPMENU) llMessageLinked(LINK_SET,iAuth,"menu "+g_sParentMenu,kAv);
-                    else if (sMsg=="Pending") UserCommand(iAuth, "relais pending", kAv);
-                    else if (sMsg=="Access Lists") UserCommand(iAuth, "relais access", kAv);
-                    else if (sMsg=="Safeword!") UserCommand(iAuth, "relais safeword", kAv);
+                    else if (sMsg=="Pending") UserCommand(iAuth, "relay pending", kAv);
+                    else if (sMsg=="Access Lists") UserCommand(iAuth, "relay access", kAv);
+                    else if (sMsg=="Safeword!") UserCommand(iAuth, "relay safeword", kAv);
                     else if (sMsg=="Sources") {
                         llMessageLinked(LINK_RLV, iAuth,"show restrictions", kAv);
                         Menu(kAv, iAuth);
@@ -683,7 +683,7 @@ default {
                             sMsg = llDeleteSubString(sMsg,0,1)+" on";
                         else if (llSubStringIndex(sMsg,"☒ ")==0||llSubStringIndex(sMsg,"☑ ")==0) 
                             sMsg = llDeleteSubString(sMsg,0,1)+" off";
-                        sMsg ="relais "+sMsg;
+                        sMsg ="relay "+sMsg;
                         UserCommand(iAuth, sMsg, kAv);
                         Menu(kAv, iAuth);
                     }                    
@@ -770,7 +770,7 @@ default {
 
     listen(integer iChan, string who, key kID, string sMsg) {
         if (iChan == SAFETY_CHANNEL) {
-            llMessageLinked(LINK_DIALOG,NOTIFY,"0\n\n⚠ "+who+" detected ⚠\n\nTo prevent conflicts this relay is being detached now! If you wish to use "+who+" anyway, type \"/%CHANNEL% %PREFIX% relais off\" to temporarily disable or type \"/%CHANNEL% %PREFIX% rm relais\" to permanently uninstall \"Das Relais\".\n",g_kWearer);
+            llMessageLinked(LINK_DIALOG,NOTIFY,"0\n\n⚠ "+who+" detected ⚠\n\nTo prevent conflicts this relay is being detached now! If you wish to use "+who+" anyway, type \"/%CHANNEL% %PREFIX% relay off\" to temporarily disable or type \"/%CHANNEL% %PREFIX% rm relay\" to permanently uninstall \"Das Relais\".\n",g_kWearer);
             llRegionSayTo(g_kWearer,SAFETY_CHANNEL,"SafetyDenied!");
         }
 /*
