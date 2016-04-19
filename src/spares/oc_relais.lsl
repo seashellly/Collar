@@ -19,7 +19,7 @@
 //                                          '  `+.;  ;  '      :            //
 //                                          :  '  |    ;       ;-.          //
 //                                          ; '   : :`-:     _.`* ;         //
-//         Das Relais - 160413.1           .*' /  .*' ; .*`- +'  `*'        //
+//         Das Relais - 160419.2           .*' /  .*' ; .*`- +'  `*'        //
 //                                       `*-*   `*-*  `*-*'                 //
 // ------------------------------------------------------------------------ //
 //  Copyright (c) 2008 - 2016 Satomi Ahn, Nandana Singh, Joy Stipe,         //
@@ -308,7 +308,7 @@ string HandleCommand(string sIdent, key kID, string sCom, integer iAuthed) {
         else if (llGetSubString(sCom,0,6)=="!x-who/") {kWho = SanitizeKey(llGetSubString(sCom,7,42)); iGotWho=TRUE;}
         else if (llGetSubString(sCom,0,0) == "!") sAck = "ko"; // ko unknown meta-commands
         else if (llGetSubString(sCom,0,0) != "@") {
-             llMessageLinked(LINK_DIALOG,NOTIFY,"0"+"Bad RLV relay command from "+llKey2Name(kID)+". \nCommand: "+sIdent+","+(string)g_kWearer+","+llDumpList2String(lCommands,"|")+"\nFaulty subcommand: "+sCom+"\nPlease report to the maker of this device.",g_kWearer); //added this after issue 984
+             llMessageLinked(LINK_DIALOG, NOTIFY, "0\n\nBad RLV relay command from "+llKey2Name(kID)+".\n\nCommand: "+sIdent+","+(string)g_kWearer+","+llDumpList2String(lCommands,"|")+"\n\nFaulty subcommand: "+sCom+"\n\nPlease report to the maker of this device.\n",g_kWearer); //added this after issue 984
             //if (iIsWho) return llList2String(lCommands,0)+"|"+llDumpList2String(llList2List(lCommands,i,-1),"|");
             //else return llDumpList2String(llList2List(lCommands,i,-1),"|");
             //better try to execute the rest of the command, right?
@@ -331,7 +331,7 @@ string HandleCommand(string sIdent, key kID, string sCom, integer iAuthed) {
                 llMessageLinked(LINK_RLV,RLV_CMD,sBehav+"="+sVal,kID);
             else sAck="ko";
         } else {
-             llMessageLinked(LINK_DIALOG,NOTIFY,"0"+"Bad RLV relay command from "+llKey2Name(kID)+". \nCommand: "+sIdent+","+(string)g_kWearer+","+llDumpList2String(lCommands,"|")+"\nFaulty subcommand: "+sCom+"\nPlease report to the maker of this device.",g_kWearer); //added this after issue 984
+             llMessageLinked(LINK_DIALOG,NOTIFY,"0\n\nBad RLV relay command from "+llKey2Name(kID)+".\n\nCommand: "+sIdent+","+(string)g_kWearer+","+llDumpList2String(lCommands,"|")+"\n\nFaulty subcommand: "+sCom+"\n\nPlease report to the maker of this device.\n",g_kWearer); //added this after issue 984
             //if (iIsWho) return llList2String(lCommands,0)+"|"+llDumpList2String(llList2List(lCommands,i,-1),"|");
             //else return llDumpList2String(llList2List(lCommands,i,-1),"|");
             //better try to execute the rest of the command, right?
@@ -351,7 +351,7 @@ sendrlvr(string sIdent, key kID, string sCom, string sAck) {
 SafeWord() {
     if (!g_iHelpless) {
         llMessageLinked(LINK_RLV, CMD_RELAY_SAFEWORD, "","");
-        llMessageLinked(LINK_DIALOG,NOTIFY,"0"+"You have safeworded",g_kWearer);
+        llMessageLinked(LINK_DIALOG, NOTIFY, "0Mayday!", g_kWearer);
         g_lTempBlockObj=[];
         g_lTempTrustObj=[];
         g_lTempBlockUser=[];
@@ -363,7 +363,7 @@ SafeWord() {
         g_iRecentSafeword = TRUE;
         refreshRlvListener();
         llSetTimerEvent(30.);
-    } else llMessageLinked(LINK_DIALOG,NOTIFY,"0"+"%NOACCESS%",g_kWearer);
+    } else llMessageLinked(LINK_DIALOG, NOTIFY, "0%NOACCESS%", g_kWearer);
 
 }
 
@@ -442,7 +442,7 @@ RemoveList(string sMsg, integer iAuth, string sListType) {
         }
         //SaveBlockObj();
     } else if (iAuth==CMD_WEARER && g_iMinBaseMode > 0) {
-        llMessageLinked(LINK_DIALOG,NOTIFY,"0"+"%NOACCESS%",g_kWearer);
+        llMessageLinked(LINK_DIALOG, NOTIFY, "0%NOACCESS%", g_kWearer);
         return;
     } else if (sListType == "Trust Objects") {
         if (sMsg == ALL) g_lTrustObj = [];
@@ -505,8 +505,8 @@ CleanQueue() {
 UserCommand(integer iNum, string sStr, key kID) {
     if (iNum<CMD_OWNER || iNum>CMD_WEARER) return;
     if (llToLower(sStr) == "rm relais") {
-        if (kID!=g_kWearer && iNum!=CMD_OWNER) llMessageLinked(LINK_DIALOG,NOTIFY,"0"+"%NOACCESS%",kID);
-        else  Dialog(kID,"\nAre you sure you want to delete the "+g_sSubMenu+" App?\n", ["Yes","No","Cancel"], [], 0, iNum,"rmrelay");
+        if (kID!=g_kWearer && iNum!=CMD_OWNER) llMessageLinked(LINK_DIALOG, NOTIFY, "0%NOACCESS%", kID);
+        else  Dialog(kID,"\nAre you sure you want to delete \"Das Relais\"?\n", ["Yes","No","Cancel"], [], 0, iNum,"rmrelais");
         return;
     }
     if (llSubStringIndex(sStr,"relais") && sStr != "menu "+g_sSubMenu) return;
@@ -515,10 +515,10 @@ UserCommand(integer iNum, string sStr, key kID) {
         return;
     }
     if (!g_iRLV) {
-        llMessageLinked(LINK_DIALOG, NOTIFY, "0RLV features are now disabled in this %DEVICETYPE%. You can enable those in RLV submenu. Opening it now.", kID);
-        llMessageLinked(LINK_SET, iNum, "menu RLV", kID);
+        llMessageLinked(LINK_RLV, iNum, "menu RLV", kID);
+        llMessageLinked(LINK_DIALOG, NOTIFY, "0\n\n\"Das Relais\" requires RLV to be running in the %DEVICETYPE% but it currently is not. To make things work, click \"ON\" in the RLV menu that just popped up!\n", kID);  
     } else if (sStr=="relais" || sStr == "menu "+g_sSubMenu) Menu(kID, iNum);
-    else if (iNum!=CMD_OWNER && iNum!=CMD_TRUSTED && kID!=g_kWearer) llMessageLinked(LINK_DIALOG, NOTIFY, "0"+"%NOACCESS%",kID);
+    else if (iNum!=CMD_OWNER && iNum!=CMD_TRUSTED && kID!=g_kWearer) llMessageLinked(LINK_DIALOG, NOTIFY, "0%NOACCESS%", kID);
     else if ((sStr=llGetSubString(sStr,7,-1))=="safeword") SafeWord(); // cut "relais " off sStr
     else if (sStr=="getdebug") {
         g_kDebugRcpt = kID;
@@ -531,7 +531,7 @@ UserCommand(integer iNum, string sStr, key kID) {
     } else if (sStr=="pending") {
         if (g_lQueue != []) Dequeue();
         else {
-            llMessageLinked(LINK_DIALOG, NOTIFY, "0No pending relay request for now.", kID);
+            llMessageLinked(LINK_DIALOG, NOTIFY, "0There are no pending relay requests.", kID);
             Menu(kID, iNum);
         }
     } else if (sStr=="access") AccessList(kID, iNum);
@@ -602,8 +602,8 @@ UserCommand(integer iNum, string sStr, key kID) {
             } else iWSuccess = 3;
         }
         if (!iWSuccess) llMessageLinked(LINK_DIALOG, NOTIFY, "1"+sText, kID);
-        else if (iWSuccess == 1)  llMessageLinked(LINK_DIALOG, NOTIFY, "0Owner settings do not allow this setting.", kID);
-        else if (iWSuccess == 2)  llMessageLinked(LINK_DIALOG, NOTIFY, "1Your relay is being locked by at least one object, you cannot disable it or enable safewording now.", kID);
+        else if (iWSuccess == 1)  llMessageLinked(LINK_DIALOG, NOTIFY, "0%NOACCESS", kID);
+        else if (iWSuccess == 2)  llMessageLinked(LINK_DIALOG, NOTIFY, "1\n\nDas Relais is in use by one or more sources. Helpless mode can't be toggled at this moment.\n", kID);
         else if (iWSuccess == 3)  llMessageLinked(LINK_DIALOG, NOTIFY, "0Invalid command, please read the manual.", kID);
         SaveMode();
         refreshRlvListener();
@@ -747,9 +747,9 @@ default {
                             sendrlvr("release", llList2Key(g_lSources, i), "!release", "ok");
                         UserCommand(500, "relay off", kAv);
                         llMessageLinked(LINK_RLV, MENUNAME_REMOVE , g_sParentMenu + "|" + g_sSubMenu, "");
-                        llMessageLinked(LINK_DIALOG, NOTIFY, "1"+g_sSubMenu+" App has been removed.", kAv);
+                        llMessageLinked(LINK_DIALOG, NOTIFY, "1Das Relais has been removed.", kAv);
                         if (llGetInventoryType(llGetScriptName()) == INVENTORY_SCRIPT) llRemoveInventory(llGetScriptName());
-                    } else llMessageLinked(LINK_DIALOG, NOTIFY, "0"+g_sSubMenu+" App remains installed.", kAv);
+                    } else llMessageLinked(LINK_DIALOG, NOTIFY, "0Das Relais remains installed.", kAv);
                 }
             }
         } else if (iNum == DIALOG_TIMEOUT) {
@@ -757,7 +757,7 @@ default {
             if (~iMenuIndex) {
                 if (llList2String(g_lMenuIDs, iMenuIndex+1) == "AuthMenu") {
                     g_iAuthPending = FALSE;
-                    llMessageLinked(LINK_DIALOG,NOTIFY,"0"+"Relay authorization dialog expired. You can make it appear again with command \"%PREFIX% relay pending\".",g_kWearer);
+                    llMessageLinked(LINK_DIALOG,NOTIFY,"0Relay authorization dialog expired. You can make it appear again with command \"%PREFIX% relay pending\".",g_kWearer);
                 }
                 g_lMenuIDs = llDeleteSubList(g_lMenuIDs, iMenuIndex-1, iMenuIndex-2+g_iMenuStride);
             }
@@ -825,7 +825,7 @@ default {
                 key kOldestId = llList2Key(g_lQueue, 1);  // It's actually more likely we want to drop the old request we completely forgot about rather than the newest one that will be forgotten because of some obscure memory limit.
 //                key kOldUser = NULL_KEY;
 //                if (llGetSubString(sMsg,0,6)=="!x-who/") kOldUser=SanitizeKey(llGetSubString(llList2String(g_lQueue, 2),7,42));
-                llMessageLinked(LINK_DIALOG,NOTIFY,"0"+"Relay queue saturated. Dropping all requests from oldest source ("+ llKey2Name(kOldestId) +").",g_kWearer);
+                llMessageLinked(LINK_DIALOG, NOTIFY, "0\n\nRelay queue saturated. Dropping all requests from oldest source ("+ llKey2Name(kOldestId) +").\n", g_kWearer);
                 g_lTempBlockObj+=[kOldestId];
 //                if (kUser) g_lTempBlockUser+=[kUser];
                 CleanQueue();
