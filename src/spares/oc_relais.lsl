@@ -19,7 +19,7 @@
 //                                          '  `+.;  ;  '      :            //
 //                                          :  '  |    ;       ;-.          //
 //                                          ; '   : :`-:     _.`* ;         //
-//             Relay - 160419.7          .*' /  .*' ; .*`- +'  `*'          //
+//             Relay - 160419.8          .*' /  .*' ; .*`- +'  `*'          //
 //                                       `*-*   `*-*  `*-*'                 //
 // ------------------------------------------------------------------------ //
 //  Copyright (c) 2008 - 2016 Satomi Ahn, Nandana Singh, Joy Stipe,         //
@@ -50,8 +50,6 @@
 //         github.com/VirtualDisgrace/Collar/tree/relay/src/spares          //
 // ------------------------------------------------------------------------ //
 //////////////////////////////////////////////////////////////////////////////
-
-integer g_iSmartStrip = FALSE; // Convert @remoutfit to @detachallthis.
 
 string g_sParentMenu = "RLV";
 string g_sSubMenu = "Relay";
@@ -151,6 +149,8 @@ integer g_iBaseMode = 2;
 integer g_iHelpless = 0;
 integer g_iLandMode = 1;
 integer g_iLiteMode = 0;
+
+integer g_iSmartStrip = TRUE; // Convert @remoutfit to @detachallthis.
 
 key g_kDebugRcpt = NULL_KEY; // recipient key for relay chat debugging (useful since you cannot eavesdrop llRegionSayTo)
 
@@ -568,9 +568,9 @@ UserCommand(integer iNum, string sStr, key kID) {
         } else if (llGetSubString(sChangetype,0,4) == "smart") {
             if (sChangevalue == "off") {
                 g_iSmartStrip = FALSE;
-                sText = "\n\nSmartstrip turned off.\n";
+                sText = "\n\nSmartstrip turned off. Attachments and clothing, also if layers are somewhere inside #RLV folder directories, will be stripped normally.\n";
             } else if (sChangevalue == "on") {
-                sText = "\n\nSmartstrip turned on.\n";
+                sText = "\n\nSmartstrip turned on. All smartstrip ready folders in the #RLV directory will be removed as a whole when corresponding clothing layers are stripped.\n";
                 g_iSmartStrip = TRUE;
             }
         } else if (sChangetype=="land") {
@@ -606,8 +606,8 @@ UserCommand(integer iNum, string sStr, key kID) {
             if (iNum == CMD_OWNER) g_iMinBaseMode = iModeType;
             if (~iModeType) {
                 if (iModeType >= g_iMinBaseMode) {
-                    if (iModeType) sText = "\n\n"+llList2String(lModes,iModeType)+" mode online.\n";
-                    else sText = "\n\nRelay is offline.\n";
+                    if (iModeType) sText = "/me is set to "+llList2String(lModes,iModeType)+" mode.";
+                    else sText = "/me is offline.";
                     g_iBaseMode = iModeType;
                 } else iWSuccess = 1;
             } else iWSuccess = 3;
