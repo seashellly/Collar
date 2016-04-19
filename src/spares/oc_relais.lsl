@@ -19,7 +19,7 @@
 //                                          '  `+.;  ;  '      :            //
 //                                          :  '  |    ;       ;-.          //
 //                                          ; '   : :`-:     _.`* ;         //
-//             Relay - 160419.4          .*' /  .*' ; .*`- +'  `*'          //
+//             Relay - 160419.5          .*' /  .*' ; .*`- +'  `*'          //
 //                                       `*-*   `*-*  `*-*'                 //
 // ------------------------------------------------------------------------ //
 //  Copyright (c) 2008 - 2016 Satomi Ahn, Nandana Singh, Joy Stipe,         //
@@ -54,9 +54,9 @@
 integer g_iSmartStrip = FALSE; // Convert @remoutfit to @detachallthis.
 
 string g_sParentMenu = "RLV";
-string g_sSubMenu = "Relais";
+string g_sSubMenu = "Relay";
 
-string g_sAppVersion = "¹⋅⁰";
+string g_sAppVersion = "⁶⋅¹⋅⁵";
 
 integer RELAY_CHANNEL = -1812221819;
 integer SAFETY_CHANNEL = -201818;
@@ -314,7 +314,7 @@ string HandleCommand(string sIdent, key kID, string sCom, integer iAuthed) {
         string sAck = "ok";
         if (sCom == "!release" || sCom == "@clear") llMessageLinked(LINK_RLV,RLV_CMD,"clear",kID);
         else if (sCom == "!version") sAck = "1100";
-        else if (sCom == "!implversion") sAck = "Das Relais 1.0";
+        else if (sCom == "!implversion") sAck = "OpenCollar Relay 6.1.5";
         else if (sCom == "!x-orgversions") sAck = "ORG=0003/who=001";
         else if (llGetSubString(sCom,0,6)=="!x-who/") {kWho = SanitizeKey(llGetSubString(sCom,7,42)); iGotWho=TRUE;}
         else if (llGetSubString(sCom,0,0) == "!") sAck = "ko"; // ko unknown meta-commands
@@ -380,7 +380,7 @@ SafeWord() {
 
 //----Menu functions section---//
 Menu(key kID, integer iAuth) {
-    string sPrompt = "\n[http://www.opencollar.at/das-relais.html Das Relais]\t"+g_sAppVersion;
+    string sPrompt = "\n[http://www.opencollar.at/relay-plugin.html Relay]\t"+g_sAppVersion;
     list lButtons = ["☐ Trusted","☐ Ask","☐ Auto"];
     if (g_iBaseMode == 1) lButtons = ["☒ Trusted","☐ Ask","☐ Auto"];
     else if (g_iBaseMode == 2) lButtons = ["☐ Trusted","☒ Ask","☐ Auto"];
@@ -517,7 +517,7 @@ UserCommand(integer iNum, string sStr, key kID) {
     if (iNum<CMD_OWNER || iNum>CMD_WEARER) return;
     if (llToLower(sStr) == "rm relay") {
         if (kID!=g_kWearer && iNum!=CMD_OWNER) RelayNotify(kID,"Access denied!",0);
-        else  Dialog(kID,"\nAre you sure you want to delete \"Das Relais\"?\n", ["Yes","No","Cancel"], [], 0, iNum,"rmrelay");
+        else  Dialog(kID,"\nAre you sure you want to delete the relay plugin?\n", ["Yes","No","Cancel"], [], 0, iNum,"rmrelay");
         return;
     }
     if (llSubStringIndex(sStr,"relay") && sStr != "menu "+g_sSubMenu) return;
@@ -527,7 +527,7 @@ UserCommand(integer iNum, string sStr, key kID) {
     }
     if (!g_iRLV) {
         llMessageLinked(LINK_RLV, iNum, "menu RLV", kID);
-        llMessageLinked(LINK_DIALOG,NOTIFY,"0\n\n\"Das Relais\" requires RLV to be running in the Collar but it currently is not. To make things work, click \"ON\" in the RLV menu that just popped up!\n",kID);  
+        llMessageLinked(LINK_DIALOG,NOTIFY,"0\n\n\The relay requires RLV to be running in the %DEVICETYPE% but it currently is not. To make things work, click \"ON\" in the RLV menu that just popped up!\n",kID);  
     } else if (sStr=="relay" || sStr == "menu "+g_sSubMenu) Menu(kID, iNum);
     else if (iNum!=CMD_OWNER && iNum!=CMD_TRUSTED && kID!=g_kWearer) RelayNotify(kID,"Access denied!",0);
     else if ((sStr=llGetSubString(sStr,7,-1))=="safeword") SafeWord(); // cut "relay " off sStr
@@ -614,7 +614,7 @@ UserCommand(integer iNum, string sStr, key kID) {
         }
         if (!iWSuccess) RelayNotify(kID,sText,1);
         else if (iWSuccess == 1)  RelayNotify(kID,"Access denied!",0);
-        else if (iWSuccess == 2)  RelayNotify(kID,"\n\nDas Relais is in use by one or more sources. Helpless mode can't be toggled at this moment.\n",1);
+        else if (iWSuccess == 2)  RelayNotify(kID,"\n\nOne or more sources are currently in use. Helpless mode can't be toggled at this moment.\n",1);
         else if (iWSuccess == 3)  RelayNotify(kID,"Invalid command, please read the manual.",0);
         SaveMode();
         refreshRlvListener();
@@ -753,9 +753,9 @@ default {
                             sendrlvr("release", llList2Key(g_lSources, i), "!release", "ok");
                         UserCommand(500, "relay off", kAv);
                         llMessageLinked(LINK_RLV, MENUNAME_REMOVE , g_sParentMenu + "|" + g_sSubMenu, "");
-                        RelayNotify(kAv,"Das Relais has been removed.",1);
+                        RelayNotify(kAv,"The relay plugin has been removed.",1);
                         if (llGetInventoryType(llGetScriptName()) == INVENTORY_SCRIPT) llRemoveInventory(llGetScriptName());
-                    } else RelayNotify(kAv,"Das Relais remains installed.",0);
+                    } else RelayNotify(kAv,"The relay plugin remains installed.",0);
                 }
             }
         } else if (iNum == DIALOG_TIMEOUT) {
@@ -776,7 +776,7 @@ default {
 
     listen(integer iChan, string who, key kID, string sMsg) {
         if (iChan == SAFETY_CHANNEL) {
-            llMessageLinked(LINK_DIALOG,NOTIFY,"0\n\n⚠ "+who+" detected ⚠\n\nTo prevent conflicts this relay is being detached now! If you wish to use "+who+" anyway, type \"/%CHANNEL% %PREFIX% relay off\" to temporarily disable or type \"/%CHANNEL% %PREFIX% rm relay\" to permanently uninstall \"Das Relais\".\n",g_kWearer);
+            llMessageLinked(LINK_DIALOG,NOTIFY,"0\n\n⚠ "+who+" detected ⚠\n\nTo prevent conflicts this relay is being detached now! If you wish to use "+who+" anyway, type \"/%CHANNEL% %PREFIX% relay off\" to temporarily disable or type \"/%CHANNEL% %PREFIX% rm relay\" to permanently uninstall the relay plugin.\n",g_kWearer);
             llRegionSayTo(g_kWearer,SAFETY_CHANNEL,"SafetyDenied!");
         }
 /*
