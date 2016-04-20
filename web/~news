@@ -1,5 +1,9 @@
-20160420.1
+20160420.2
 
-Welcome to OpenCollar 6.2
+Weclome to OpenCollar
+Changelogs: [https://github.com/OpenCollar/opencollar/issues?q=milestone%3A6.1.0+is%3Aclosed 6.1] | [https://github.com/OpenCollar/opencollar/issues?q=milestone%3A6.2+is%3Aclosed 6.2]
 
-For technical details on this milestone click [https://github.com/OpenCollar/opencollar/issues?q=milestone%3A6.2+is%3Aclosed here (6.2)] or [https://github.com/OpenCollar/opencollar/issues?q=milestone%3A6.1.0+is%3Aclosed here (6.1)] for the previous milestone. Browse www.opencollar.at for manual pages and news. You can learn useful things about your own %DEVICETYPE% by typing: /%CHANNEL% %PREFIX% info
+Prefix: %PREFIX%
+Channel: %CHANNEL%
+
+www.opencollar.at/blog
