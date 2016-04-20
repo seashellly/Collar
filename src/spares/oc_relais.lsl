@@ -19,7 +19,7 @@
 //                                          '  `+.;  ;  '      :            //
 //                                          :  '  |    ;       ;-.          //
 //                                          ; '   : :`-:     _.`* ;         //
-//             Relay - 160419.9          .*' /  .*' ; .*`- +'  `*'          //
+//             Relay - 160420.1          .*' /  .*' ; .*`- +'  `*'          //
 //                                       `*-*   `*-*  `*-*'                 //
 // ------------------------------------------------------------------------ //
 //  Copyright (c) 2008 - 2016 Satomi Ahn, Nandana Singh, Joy Stipe,         //
@@ -53,8 +53,6 @@
 
 string g_sParentMenu = "RLV";
 string g_sSubMenu = "Relay";
-
-string g_sAppVersion = "⁶⋅¹⋅⁵";
 
 integer RELAY_CHANNEL = -1812221819;
 integer SAFETY_CHANNEL = -201818;
@@ -362,7 +360,7 @@ sendrlvr(string sIdent, key kID, string sCom, string sAck) {
 SafeWord() {
     if (!g_iHelpless) {
         llMessageLinked(LINK_RLV, CMD_RELAY_SAFEWORD, "","");
-        RelayNotify(g_kWearer,"\n\n\"Mayday!\"\n",0);
+        RelayNotify(g_kWearer,"Mayday!",0);
         g_lTempBlockObj=[];
         g_lTempTrustObj=[];
         g_lTempBlockUser=[];
@@ -374,7 +372,7 @@ SafeWord() {
         g_iRecentSafeword = TRUE;
         refreshRlvListener();
         llSetTimerEvent(30.);
-    } else RelayNotify(g_kWearer,"\n\nAccess denied!\n",0);
+    } else RelayNotify(g_kWearer,"Access denied!",0);
 
 }
 
@@ -462,7 +460,7 @@ RemoveList(string sMsg, integer iAuth, string sListType) {
         }
         //SaveBlockObj();
     } else if (iAuth==CMD_WEARER && g_iMinBaseMode > 0) {
-        RelayNotify(g_kWearer,"\n\nAccess denied!\n",0);
+        RelayNotify(g_kWearer,"Access denied!",0);
         return;
     } else if (sListType == "Trust Objects") {
         if (sMsg == ALL) g_lTrustObj = [];
@@ -525,7 +523,7 @@ CleanQueue() {
 UserCommand(integer iNum, string sStr, key kID) {
     if (iNum<CMD_OWNER || iNum>CMD_WEARER) return;
     if (llToLower(sStr) == "rm relay") {
-        if (kID!=g_kWearer && iNum!=CMD_OWNER) RelayNotify(kID,"\n\nAccess denied!\n",0);
+        if (kID!=g_kWearer && iNum!=CMD_OWNER) RelayNotify(kID,"Access denied!",0);
         else  Dialog(kID,"\nAre you sure you want to delete the relay plugin?\n", ["Yes","No","Cancel"], [], 0, iNum,"rmrelay");
         return;
     }
@@ -538,20 +536,20 @@ UserCommand(integer iNum, string sStr, key kID) {
         llMessageLinked(LINK_RLV, iNum, "menu RLV", kID);
         llMessageLinked(LINK_DIALOG,NOTIFY,"0\n\n\The relay requires RLV to be running in the %DEVICETYPE% but it currently is not. To make things work, click \"ON\" in the RLV menu that just popped up!\n",kID);  
     } else if (sStr=="relay" || sStr == "menu "+g_sSubMenu) Menu(kID, iNum);
-    else if (iNum!=CMD_OWNER && iNum!=CMD_TRUSTED && kID!=g_kWearer) RelayNotify(kID,"\n\nAccess denied!\n",0);
+    else if (iNum!=CMD_OWNER && iNum!=CMD_TRUSTED && kID!=g_kWearer) RelayNotify(kID,"Access denied!",0);
     else if ((sStr=llGetSubString(sStr,6,-1))=="safeword") SafeWord(); // cut "relay " off sStr
     else if (sStr=="getdebug") {
         g_kDebugRcpt = kID;
-        RelayNotify(kID,"\n\nMessages will be forwarded to "+NameURI(kID)+".\n",1);
+        RelayNotify(kID,"/me messages will be forwarded to "+NameURI(kID)+".",1);
         return;
     } else if (sStr=="stopdebug") {
         g_kDebugRcpt = NULL_KEY;
-        RelayNotify(kID,"\n\nMessages won't forwarded anymore.\n",1);
+        RelayNotify(kID,"/me messages won't forwarded anymore.",1);
         return;
     } else if (sStr=="pending") {
         if (g_lQueue != []) Dequeue();
         else {
-            RelayNotify(kID,"\n\nThere are no pending requests.\n",0);
+            RelayNotify(kID,"There are no pending requests.",0);
             Menu(kID, iNum);
         }
     } else if (sStr=="access") AccessList(kID, iNum);
@@ -566,20 +564,20 @@ UserCommand(integer iNum, string sStr, key kID) {
                 if (g_iMinSafeMode == FALSE) iWSuccess = 1;
                 else if (g_lSources!=[]) iWSuccess = 2;
                 else {
-                    sText = "\n\nHelplessness option activated. Restrictions from outside sources can't be cleard with safewording.\n";
+                    sText = "Helplessness imposed.\n\nRestrictions from outside sources can't be cleard with safewording.\n";
                     g_iHelpless = TRUE;
                 }
             } else if (sChangevalue == "off") {
                 if (iNum == CMD_OWNER) g_iMinSafeMode = FALSE;
                 g_iHelpless = FALSE;
-                sText = "\n\nHelplessness option deactivated. Safewording will clear restrictions from outside sources.\n";
+                sText = "Helplessness lifted.\n\nSafewording will clear restrictions from outside sources.\n";
             } else iWSuccess = 3;
         } else if (llGetSubString(sChangetype,0,4) == "smart") {
             if (sChangevalue == "off") {
                 g_iSmartStrip = FALSE;
-                sText = "\n\nSmartstrip turned off. Attachments and clothing, also if layers are somewhere inside #RLV folder directories, will be stripped normally.\n";
+                sText = "Smartstrip turned off.\n\nAttachments and clothing, also if layers are somewhere inside #RLV folder directories, will be stripped normally.\n";
             } else if (sChangevalue == "on") {
-                sText = "\n\nSmartstrip turned on. All smartstrip ready folders in the #RLV directory will be removed as a whole when corresponding clothing layers are stripped.\n";
+                sText = "Smartstrip turned on.\n\nAll smartstrip ready folders in the #RLV directory will be removed as a whole when corresponding clothing layers are stripped.\n";
                 g_iSmartStrip = TRUE;
             }
         } else if (sChangetype=="land") {
@@ -587,12 +585,12 @@ UserCommand(integer iNum, string sStr, key kID) {
                 if (iNum == CMD_OWNER) g_iMinLandMode = FALSE;
                 if (g_iMinLandMode == TRUE) iWSuccess = 1;
                 else {
-                    sText = "\n\nLandowner is not trusted. RLV commands from their objects will require confirmation on Ask mode as well.\n";
+                    sText = "Landowner is not trusted.\n\nRLV commands from their objects will require confirmation on Ask mode as well.\n";
                     g_iLandMode = FALSE;
                 }
             } else if (sChangevalue == "on") {
                 if (iNum == CMD_OWNER) g_iMinLandMode = TRUE;
-                sText = "\n\nLandowner is trusted. RLV commands from their objects will be processed without confirmation even on Ask mode.\n";
+                sText = "Landowner is trusted.\n\nRLV commands from their objects will be processed without confirmation even on Ask mode.\n";
                 g_iLandMode = TRUE;
             } else iWSuccess = 3;
         } else if (sChangetype=="lite") {
@@ -600,12 +598,12 @@ UserCommand(integer iNum, string sStr, key kID) {
                 if (iNum == CMD_OWNER) g_iMinLiteMode = FALSE;
                 if (g_iMinLiteMode == TRUE) iWSuccess = 1;
                 else {
-                    sText = "\n\nLite option deactivated. Unless on Ask mode, stripping and restrictive requests will be processed without confirmation.\n";
+                    sText = "Lite option deactivated.\n\nUnless on Ask mode, stripping and restrictive requests will be processed without confirmation.\n";
                     g_iLiteMode = FALSE;
                 }
             } else if (sChangevalue == "on") {
                 if (iNum == CMD_OWNER) g_iMinLiteMode = TRUE;
-                sText = "\n\nLite option activated. Only stripping will happen instantly now. All restrictive requests will require prior confirmation.\n";
+                sText = "Lite option activated.\n\nOnly stripping will happen instantly now. All restrictive requests will require prior confirmation.\n";
                 g_iLiteMode = TRUE;
             } else iWSuccess = 3;
         } else {
@@ -622,8 +620,8 @@ UserCommand(integer iNum, string sStr, key kID) {
             } else iWSuccess = 3;
         }
         if (!iWSuccess) RelayNotify(kID,sText,1);
-        else if (iWSuccess == 1)  RelayNotify(kID,"\n\nAccess denied!\n",0);
-        else if (iWSuccess == 2)  RelayNotify(kID,"\n\nOne or more sources are currently in use. Helplessness can't be toggled at this moment.\n",1);
+        else if (iWSuccess == 1)  RelayNotify(kID,"Access denied!",0);
+        else if (iWSuccess == 2)  RelayNotify(kID,"/me is currently in use by one or more sources.\n\nHelplessness can't be toggled at this moment.\n",1);
         //else if (iWSuccess == 3)  RelayNotify(kID,"Invalid command, please read the manual.",0);
         SaveMode();
         refreshRlvListener();
@@ -762,9 +760,9 @@ default {
                             sendrlvr("release", llList2Key(g_lSources, i), "!release", "ok");
                         UserCommand(500, "relay off", kAv);
                         llMessageLinked(LINK_RLV, MENUNAME_REMOVE , g_sParentMenu + "|" + g_sSubMenu, "");
-                        llMessageLinked(LINK_DIALOG, NOTIFY, "0The relay plugin has been removed.", kAv);
+                        RelayNotify(kAv,"/me has been removed.",1);
                         if (llGetInventoryType(llGetScriptName()) == INVENTORY_SCRIPT) llRemoveInventory(llGetScriptName());
-                    } else llMessageLinked(LINK_DIALOG, NOTIFY, "0The relay plugin remains installed.", kAv);
+                    } else RelayNotify(kAv,"/me remains installed.",0);
                 }
             }
         } else if (iNum == DIALOG_TIMEOUT) {
@@ -772,7 +770,7 @@ default {
             if (~iMenuIndex) {
                 if (llList2String(g_lMenuIDs, iMenuIndex+1) == "AuthMenu") {
                     g_iAuthPending = FALSE;
-                    RelayNotify(g_kWearer,"\n\nAuthorization dialog expired. You can make it appear again with command \"%PREFIX% relay pending\".\n",0);
+                    RelayNotify(g_kWearer,"/me confirmation dialog expired.\n\nYou can make this dialog appear again with command \"%PREFIX% relay pending\".\n",0);
                 }
                 g_lMenuIDs = llDeleteSubList(g_lMenuIDs, iMenuIndex-1, iMenuIndex-2+g_iMenuStride);
             }
@@ -840,7 +838,7 @@ default {
                 key kOldestId = llList2Key(g_lQueue, 1);  // It's actually more likely we want to drop the old request we completely forgot about rather than the newest one that will be forgotten because of some obscure memory limit.
 //                key kOldUser = NULL_KEY;
 //                if (llGetSubString(sMsg,0,6)=="!x-who/") kOldUser=SanitizeKey(llGetSubString(llList2String(g_lQueue, 2),7,42));
-                RelayNotify(g_kWearer,"\n\nQueue saturated. Dropping all requests from oldest source ("+ llKey2Name(kOldestId) +").\n",0);
+                RelayNotify(g_kWearer,"/me queue saturated.\n\nDropping all requests from oldest source ("+ llKey2Name(kOldestId) +").\n",0);
                 g_lTempBlockObj+=[kOldestId];
 //                if (kUser) g_lTempBlockUser+=[kUser];
                 CleanQueue();
